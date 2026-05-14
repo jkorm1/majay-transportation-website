@@ -556,7 +556,7 @@ export default function Home() {
             Ghana&apos;s Premier Transport & Driving School System
           </p>
           <p className="text-xs mt-4 text-blue-200">
-            © 2024 Majay Transportation. All rights reserved.
+            © 2026 Majay Transportation. All rights reserved.
           </p>
         </div>
       </footer>
