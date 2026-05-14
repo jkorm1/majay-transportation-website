@@ -149,9 +149,15 @@ export const EnrollmentModal = ({
                   onChange={handleInputChange}
                   className="w-full px-4 py-2 border-2 border-blue-200 rounded-lg focus:outline-none focus:border-blue-950 focus:ring-2 focus:ring-blue-200"
                 >
-                  <option value="Class 1">Class 1 (Private Vehicles)</option>
-                  <option value="Defensive Driving">Defensive Driving</option>
-                  <option value="Refresher Training">Refresher Training</option>
+                  <option value="Beginner Course (Regular)">
+                    Beginner Course (Regular) - GH₵ 1,000 (3 Weeks)
+                  </option>
+                  <option value="Beginner Course (Premium)">
+                    Beginner Course (Premium) - GH₵ 1,500 (4 Weeks)
+                  </option>
+                  <option value="Refresher Course">
+                    Refresher Course - GH₵ 650 (1 Week)
+                  </option>
                 </select>
               </div>
 

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Phone, MapPin, Clock, Shield, Zap, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   AnimatedSection,
   StaggerContainer,
@@ -19,12 +19,45 @@ export default function Home() {
     fullName: "",
     phone: "",
     email: "",
-    course: "Class 1",
+    course: "Beginner Course (Regular)",
     startDate: "",
     note: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState("");
+  const [currentCourse, setCurrentCourse] = useState(0);
+
+  const courses = [
+    {
+      name: "Beginner Course (Regular)",
+      price: "GH₵ 1,000",
+      duration: "3-Week Program with weekly lessons",
+      description:
+        "Perfect for beginners who want to master the basics of driving safely and confidently.",
+    },
+    {
+      name: "Beginner Course (Premium)",
+      price: "GH₵ 1,500",
+      duration: "4-Week Program with extended practice",
+      description:
+        "Comprehensive training with additional practice time and personalized attention.",
+    },
+    {
+      name: "Refresher Course",
+      price: "GH₵ 650",
+      duration: "1-Week Program",
+      description:
+        "Brush up on your skills and stay updated with the latest driving regulations.",
+    },
+  ];
+
+  // Auto-rotate courses every 5 seconds
+  useState(() => {
+    const interval = setInterval(() => {
+      setCurrentCourse((prev) => (prev + 1) % courses.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleInputChange = (
     e: React.ChangeEvent<
@@ -55,7 +88,7 @@ export default function Home() {
           fullName: "",
           phone: "",
           email: "",
-          course: "Class 1",
+          course: "Beginner Course (Regular)",
           startDate: "",
           note: "",
         });
@@ -149,7 +182,7 @@ export default function Home() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
             >
-              <div className="relative w-full h-96">
+              <div className="relative w-full h-96 mb-6">
                 <Image
                   src="/car.png"
                   alt="Majay Driving School Car"
@@ -158,41 +191,78 @@ export default function Home() {
                   priority
                 />
               </div>
-              <motion.div
-                className="bg-white/95 backdrop-blur rounded-2xl p-8 shadow-2xl"
-                whileHover={{
-                  y: -10,
-                  boxShadow: "0 30px 60px rgba(0, 0, 0, 0.3)",
-                }}
-              >
-                <h3 className="text-2xl font-bold text-blue-950 mb-6">
-                  Special Offer
-                </h3>
-                <div className="mb-8">
-                  <p className="text-sm text-gray-600 mb-2">2-Week Program</p>
-                  <div className="text-5xl font-bold text-yellow-500 mb-2">
-                    GH₵ 1,000
-                  </div>
-                  <p className="text-gray-700 text-sm mb-6">
-                    Weekly lessons included
-                  </p>
-                  <p className="text-blue-950 font-semibold italic">
-                    Unlock a skill that will last a lifetime.
-                  </p>
+
+              {/* Course Carousel */}
+              <div className="relative h-80 overflow-hidden">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={currentCourse}
+                    initial={{ opacity: 0, x: 50 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -50 }}
+                    transition={{ duration: 0.5 }}
+                    className="bg-white/95 backdrop-blur rounded-2xl p-8 shadow-2xl absolute inset-0"
+                    whileHover={{
+                      y: -10,
+                      boxShadow: "0 30px 60px rgba(0, 0, 0, 0.3)",
+                    }}
+                  >
+                    <h3 className="text-2xl font-bold text-blue-950 mb-6">
+                      Special Offer
+                    </h3>
+                    <div className="mb-8">
+                      <p className="text-sm text-gray-600 mb-2">
+                        {courses[currentCourse].name}
+                      </p>
+                      <div className="text-5xl font-bold text-yellow-500 mb-2">
+                        {courses[currentCourse].price}
+                      </div>
+                      <p className="text-gray-700 text-sm mb-6">
+                        {courses[currentCourse].duration}
+                      </p>
+                      <p className="text-blue-950 font-semibold italic">
+                        Unlock a skill that will last a lifetime.
+                      </p>
+                    </div>
+
+                    <Button
+                      onClick={() => {
+                        setFormData({
+                          ...formData,
+                          course: courses[currentCourse].name,
+                        });
+                        setShowForm(true);
+                      }}
+                      className="w-full bg-blue-950 hover:bg-blue-900 text-white font-bold text-lg py-6 "
+                    >
+                      Get Started
+                    </Button>
+
+                    <div className="mt-6 pt-6 border-t border-gray-200">
+                      <p className="text-xs text-gray-600 text-center">
+                        Campus-based for your convenience • Flexible scheduling
+                        available
+                      </p>
+                    </div>
+                  </motion.div>
+                </AnimatePresence>
+
+                {/* Carousel Indicators */}
+                <div className="absolute bottom-1 right-0 right-0 flex justify-left gap-2">
+                  {courses.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentCourse(index)}
+                      className={`w-3 h-3 rounded-full transition-all ${
+                        currentCourse === index
+                          ? "bg-yellow-700 w-2"
+                          : "bg-white/50 hover:bg-white/80"
+                      }`}
+                      aria-label={`View course ${index + 1}`}
+                    />
+                  ))}
                 </div>
-                <Button
-                  onClick={() => setShowForm(true)}
-                  className="w-full bg-blue-950 hover:bg-blue-900 text-white font-bold text-lg py-6"
-                >
-                  Get Started
-                </Button>
-                <div className="mt-6 pt-6 border-t border-gray-200">
-                  <p className="text-xs text-gray-600 text-center">
-                    Campus-based for your convenience • Flexible scheduling
-                    available
-                  </p>
-                </div>
-              </motion.div>
+              </div>
             </motion.div>
           </div>
         </div>
@@ -272,11 +342,14 @@ export default function Home() {
                   <Zap className="w-8 h-8 text-yellow-400" />
                 </div>
                 <h3 className="text-2xl font-bold text-blue-950 mb-3">
-                  Class 1
+                  Beginner Course (Regular)
                 </h3>
+                <div className="text-3xl font-bold text-yellow-500 mb-4">
+                  GH₵ 1,000
+                </div>
                 <p className="text-gray-700 mb-4">
-                  Private Vehicles - Perfect for beginners who want to master
-                  the basics of driving safely and confidently.
+                  3-Week Program - Perfect for beginners who want to master the
+                  basics of driving safely and confidently.
                 </p>
                 <ul className="space-y-2 text-sm text-gray-700">
                   <li className="flex items-start gap-2">
@@ -289,7 +362,7 @@ export default function Home() {
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-yellow-400 font-bold mt-1">•</span>
-                    <span>DVLA exam preparation</span>
+                    <span>DVLA Assistance</span>
                   </li>
                 </ul>
               </motion.div>
@@ -303,24 +376,27 @@ export default function Home() {
                   <Shield className="w-8 h-8 text-yellow-400" />
                 </div>
                 <h3 className="text-2xl font-bold text-blue-950 mb-3">
-                  Defensive Driving
+                  Beginner Course (Premium)
                 </h3>
+                <div className="text-3xl font-bold text-yellow-500 mb-4">
+                  GH₵ 1,500
+                </div>
                 <p className="text-gray-700 mb-4">
-                  Advanced techniques to anticipate hazards and drive safely in
-                  all conditions. For experienced drivers.
+                  4-Week Program - Comprehensive training with additional
+                  practice time and personalized attention.
                 </p>
                 <ul className="space-y-2 text-sm text-gray-700">
                   <li className="flex items-start gap-2">
                     <span className="text-yellow-400 font-bold mt-1">•</span>
-                    <span>Hazard awareness</span>
+                    <span>Extended practice sessions</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-yellow-400 font-bold mt-1">•</span>
-                    <span>Emergency handling</span>
+                    <span>One-on-one instruction</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-yellow-400 font-bold mt-1">•</span>
-                    <span>Safe driving practices</span>
+                    <span>Priority scheduling</span>
                   </li>
                 </ul>
               </motion.div>
@@ -334,11 +410,14 @@ export default function Home() {
                   <Clock className="w-8 h-8 text-yellow-400" />
                 </div>
                 <h3 className="text-2xl font-bold text-blue-950 mb-3">
-                  Refresher Training
+                  Refresher Course
                 </h3>
+                <div className="text-3xl font-bold text-yellow-500 mb-4">
+                  GH₵ 650
+                </div>
                 <p className="text-gray-700 mb-4">
-                  Brush up on your skills and stay updated with the latest
-                  driving regulations and best practices.
+                  1-Week Program - Brush up on your skills and stay updated with
+                  the latest driving regulations and best practices.
                 </p>
                 <ul className="space-y-2 text-sm text-gray-700">
                   <li className="flex items-start gap-2">
@@ -497,9 +576,11 @@ export default function Home() {
               <p className="text-sm font-semibold text-yellow-400 mb-2">
                 SPECIAL OFFER
               </p>
-              <h3 className="text-4xl font-bold mb-4">GH₵ 1,000 for 2 Weeks</h3>
+              <h3 className="text-4xl font-bold mb-4">
+                Beginner Course (Regular) - GH₵ 1,000
+              </h3>
               <p className="text-blue-100 mb-8">
-                Complete course with all lessons included
+                3-Week Program with weekly lessons
               </p>
               <Button
                 onClick={() => setShowForm(true)}
