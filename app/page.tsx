@@ -8,6 +8,7 @@ import {
   AnimatedSection,
   StaggerContainer,
   StaggerItem,
+  CarAnimation,
 } from "@/components/animations";
 import { EnrollmentModal } from "@/components/EnrollmentModal";
 import Image from "next/image";
@@ -227,6 +228,40 @@ export default function Home() {
               Choose the right program for your needs
             </p>
           </AnimatedSection>
+
+          <div className="relative w-full h-64 md:h-96 mb-16">
+            <div className="relative w-full h-full">
+              <CarAnimation>
+                <Image
+                  src="/car.png"
+                  alt="Majay Driving School Car"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-contain"
+                  priority
+                />
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1.5, duration: 0.5 }}
+                  className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-3/4 h-4 bg-black/20 rounded-full blur-md"
+                ></motion.div>
+              </CarAnimation>
+              <motion.div
+                initial={{ y: 0 }}
+                animate={{ y: [0, -10, 0] }}
+                transition={{
+                  delay: 1.5,
+                  duration: 2,
+                  repeat: Infinity,
+                  repeatType: "loop",
+                  ease: "easeInOut",
+                }}
+                className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-3/4 h-4 bg-black/20 rounded-full blur-md"
+              ></motion.div>
+            </div>
+          </div>
+
           <StaggerContainer className="grid md:grid-cols-3 gap-8">
             <StaggerItem>
               <motion.div

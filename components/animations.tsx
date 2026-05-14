@@ -68,3 +68,20 @@ export const StaggerItem = ({ children }: { children: React.ReactNode }) => (
     {children}
   </motion.div>
 );
+
+export const CarAnimation = ({ children }: { children: React.ReactNode }) => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, amount: 0.3 });
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ x: "100%", opacity: 0 }}
+      animate={isInView ? { x: 0, opacity: 1 } : { x: "10%", opacity: 0 }}
+      transition={{ duration: 1.5, ease: "easeOut" }}
+      className="relative w-full h-full"
+    >
+      {children}
+    </motion.div>
+  );
+};
