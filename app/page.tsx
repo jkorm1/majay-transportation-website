@@ -10,6 +10,7 @@ import {
   StaggerItem,
 } from "@/components/animations";
 import { EnrollmentModal } from "@/components/EnrollmentModal";
+import Image from "next/image";
 
 export default function Home() {
   const [showForm, setShowForm] = useState(false);
@@ -100,7 +101,7 @@ export default function Home() {
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ duration: 0.6, delay: 0.4 }}
                 >
-                  <div className="h-50 w-50 sm:h-14 sm:w-14 rounded-full overflow-hidden bg-white shadow-md">
+                  <div className="h-20 w-20 sm:h-14 sm:w-14 rounded-full overflow-hidden bg-white shadow-md">
                     <img
                       src="/logo.png"
                       alt="Majay Logo"
@@ -147,6 +148,15 @@ export default function Home() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
             >
+              <div className="relative w-full h-96">
+                <Image
+                  src="/car.png"
+                  alt="Majay Driving School Car"
+                  fill
+                  className="object-contain"
+                  priority
+                />
+              </div>
               <motion.div
                 className="bg-white/95 backdrop-blur rounded-2xl p-8 shadow-2xl"
                 whileHover={{
