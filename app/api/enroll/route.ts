@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { google } from 'googleapis';
+import { sendEnrollmentNotification } from '@/lib/telegram';
 
 export async function POST(request: NextRequest) {
   try {
@@ -28,7 +29,6 @@ export async function POST(request: NextRequest) {
     const credentials = JSON.parse(credentialsStr);
     const formattedPrivateKey = credentials.private_key.replace(/\\n/g, '\n');
 
-
     // Configure JWT auth client
     const auth = new google.auth.JWT({
       email: credentials.client_email,
@@ -38,13 +38,9 @@ export async function POST(request: NextRequest) {
 
     await auth.authorize();
 
-
- 
-
     const sheets = google.sheets({ version: 'v4', auth });
 
     // Append the data to the Google Sheet
-    // Make sure your Google Sheet has a sheet named "Sheet1" or change the range accordingly
     await sheets.spreadsheets.values.append({
       spreadsheetId: sheetId,
       range: 'Enrollments!A:G',
@@ -64,6 +60,21 @@ export async function POST(request: NextRequest) {
         ],
       },
     });
+
+    // Send Telegram notification
+    try {
+      await sendEnrollmentNotification({
+        fullName: body.fullName,
+        phone: body.phone,
+        email: body.email,
+        course: body.course || 'Class 1',
+        startDate: body.startDate,
+        note: body.note || '',
+      });
+    } catch (telegramError) {
+      console.error('Failed to send Telegram notification:', telegramError);
+      // Continue with the response even if Telegram notification fails
+    }
 
     return NextResponse.json(
       { message: 'Form submitted Successfully' },

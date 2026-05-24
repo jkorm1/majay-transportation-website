@@ -11,9 +11,14 @@ import {
   CarAnimation,
 } from "@/components/animations";
 import { EnrollmentModal } from "@/components/EnrollmentModal";
+import { RideRequestModal } from "@/components/RideRequestModal";
 import Image from "next/image";
 
 export default function Home() {
+  // 添加导航状态管理
+  const [currentMode, setCurrentMode] = useState<"ride" | "driving">("ride");
+
+  // 驾驶学校表单状态
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "",
@@ -26,6 +31,17 @@ export default function Home() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState("");
   const [currentCourse, setCurrentCourse] = useState(0);
+
+  // 乘车请求表单状态
+  const [showRideForm, setShowRideForm] = useState(false);
+  const [rideFormData, setRideFormData] = useState({
+    name: "",
+    phone: "",
+    location: "",
+    price: "",
+  });
+  const [isRideSubmitting, setIsRideSubmitting] = useState(false);
+  const [rideSubmitMessage, setRideSubmitMessage] = useState("");
 
   const courses = [
     {
@@ -114,6 +130,71 @@ export default function Home() {
     }
   };
 
+  const handleRideInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => {
+    const { name, value } = e.target;
+    setRideFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleRideSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsRideSubmitting(true);
+    setRideSubmitMessage("");
+
+    try {
+      const response = await fetch("/api/ride-request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(rideFormData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.message) {
+        setRideSubmitMessage(data.message);
+
+        // Update the form data with the response data to ensure pickupTime and customTime are preserved
+        if (data.formData) {
+          setRideFormData({
+            ...rideFormData,
+            ...data.formData,
+          });
+        } else {
+          setRideFormData({
+            name: "",
+            phone: "",
+            location: "",
+            pickupTime: "",
+            customTime: "",
+            price: "",
+            notes: "",
+          });
+        }
+      } else {
+        setRideSubmitMessage(
+          data.error || "Error submitting form. Please try again.",
+        );
+      }
+    } catch (error) {
+      console.error("[v0] Form submission error:", error);
+      setRideSubmitMessage(
+        error instanceof Error
+          ? error.message
+          : "Error submitting form. Please try again.",
+      );
+      if (error instanceof Error && error.message.includes("fetch")) {
+        setRideSubmitMessage(
+          "Network error. Please check your connection and try again.",
+        );
+      }
+    } finally {
+      setIsRideSubmitting(false);
+    }
+  };
+
   return (
     <div className="bg-background text-foreground">
       {/* Hero Section */}
@@ -121,50 +202,108 @@ export default function Home() {
         <div className="absolute top-0 right-0 w-96 h-96 bg-yellow-400 rounded-full opacity-10 blur-3xl"></div>
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-400 rounded-full opacity-10 blur-3xl"></div>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-10">
+          {/* Navigation Bar */}
+          <motion.nav
+            className="w-full bg-white/10 backdrop-blur-md rounded-xl p-2 flex items-center justify-between mb-8"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="flex items-center gap-2">
+              <div className="h-10 w-10 rounded-full overflow-hidden bg-white shadow-md">
+                <img
+                  src="/logo.png"
+                  alt="Majay Logo"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <span className="text-white font-bold text-lg">
+                Majay Transportation
+              </span>
+            </div>
+            <div className="flex bg-black/20 rounded-lg p-1">
+              <button
+                key="nav-ride"
+                onClick={() => setCurrentMode("ride")}
+                className={`px-4 py-2 rounded-md text-sm font-semibold transition-all ${
+                  currentMode === "ride"
+                    ? "bg-yellow-400 text-blue-950"
+                    : "text-white hover:bg-white/10"
+                }`}
+              >
+                Ride Request
+              </button>
+              <button
+                key="nav-driving"
+                onClick={() => setCurrentMode("driving")}
+                className={`px-4 py-2 rounded-md text-sm font-semibold transition-all ${
+                  currentMode === "driving"
+                    ? "bg-yellow-400 text-blue-950"
+                    : "text-white hover:bg-white/10"
+                }`}
+              >
+                Driving School
+              </button>
+            </div>
+          </motion.nav>
+
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <motion.div
               className="text-white"
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
+              key={`hero-left-${currentMode}`}
             >
-              <div className="mb-8">
-                <motion.div
-                  className="inline-block mb-6"
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ duration: 0.6, delay: 0.4 }}
-                >
-                  <div className="h-20 w-20 sm:h-14 sm:w-14 rounded-full overflow-hidden bg-white shadow-md">
-                    <img
-                      src="/logo.png"
-                      alt="Majay Logo"
-                      className="w-full h-full object-cover"
-                    />
+              {currentMode === "ride" ? (
+                <>
+                  <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight text-balance">
+                    Request a Ride with Majay
+                  </h1>
+                  <p className="text-xl md:text-2xl text-blue-100 mb-8 text-balance">
+                    Safe, reliable, and comfortable transportation services.
+                    Book your ride now and experience premium service.
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-4 mb-10">
+                    <Button
+                      onClick={() => setShowRideForm(true)}
+                      className="bg-yellow-400 hover:bg-yellow-500 text-blue-950 font-bold text-lg px-8 py-6"
+                    >
+                      Request a Ride
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="border-white text-black hover:bg-white hover:text-blue-950 font-bold text-lg px-8 py-6"
+                    >
+                      Learn More
+                    </Button>
                   </div>
-                </motion.div>
-              </div>
-              <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight text-balance">
-                Start Your Driving Journey Today
-              </h1>
-              <p className="text-xl md:text-2xl text-blue-100 mb-8 text-balance">
-                Professional driving instruction right on KNUST campus. Learn
-                from experienced instructors with modern vehicles.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 mb-10">
-                <Button
-                  onClick={() => setShowForm(true)}
-                  className="bg-yellow-400 hover:bg-yellow-500 text-blue-950 font-bold text-lg px-8 py-6"
-                >
-                  Enroll Now
-                </Button>
-                <Button
-                  variant="outline"
-                  className="border-white text-black hover:bg-white hover:text-blue-950 font-bold text-lg px-8 py-6"
-                >
-                  Learn More
-                </Button>
-              </div>
+                </>
+              ) : (
+                <>
+                  <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight text-balance">
+                    Start Your Driving Journey Today
+                  </h1>
+                  <p className="text-xl md:text-2xl text-blue-100 mb-8 text-balance">
+                    Professional driving instruction right on KNUST campus.
+                    Learn from experienced instructors with modern vehicles.
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-4 mb-10">
+                    <Button
+                      onClick={() => setShowForm(true)}
+                      className="bg-yellow-400 hover:bg-yellow-500 text-blue-950 font-bold text-lg px-8 py-6"
+                    >
+                      Enroll Now
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="border-white text-black hover:bg-white hover:text-blue-950 font-bold text-lg px-8 py-6"
+                    >
+                      Learn More
+                    </Button>
+                  </div>
+                </>
+              )}
               <div className="space-y-3 text-blue-100">
                 <div className="flex items-center gap-3">
                   <Phone className="w-5 h-5 text-yellow-400 flex-shrink-0" />
@@ -181,88 +320,166 @@ export default function Home() {
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
+              key={`hero-right-${currentMode}`}
             >
-              <div className="relative w-full h-96 mb-6">
-                <Image
-                  src="/car.png"
-                  alt="Majay Driving School Car"
-                  fill
-                  className="object-contain"
-                  priority
-                />
-              </div>
+              {currentMode === "ride" ? (
+                <>
+                  <div className="relative w-full h-96 mb-6">
+                    <Image
+                      src="/car.png"
+                      alt="Majay Transportation Car"
+                      fill
+                      className="object-contain"
+                      priority
+                    />
+                  </div>
 
-              {/* Course Carousel */}
-              <div className="relative h-80 overflow-hidden">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={currentCourse}
-                    initial={{ opacity: 0, x: 50 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -50 }}
-                    transition={{ duration: 0.5 }}
-                    className="bg-white/95 backdrop-blur rounded-2xl p-8 shadow-2xl absolute inset-0"
-                    whileHover={{
-                      y: -10,
-                      boxShadow: "0 30px 60px rgba(0, 0, 0, 0.3)",
-                    }}
-                  >
+                  {/* Ride Request Info */}
+                  <div className="bg-white/95 backdrop-blur rounded-2xl p-8 shadow-2xl">
                     <h3 className="text-2xl font-bold text-blue-950 mb-6">
-                      Special Offer
+                      Why Choose Majay for Your Rides?
                     </h3>
-                    <div className="mb-8">
-                      <p className="text-sm text-gray-600 mb-2">
-                        {courses[currentCourse].name}
-                      </p>
-                      <div className="text-5xl font-bold text-yellow-500 mb-2">
-                        {courses[currentCourse].price}
+                    <div className="space-y-4 mb-8">
+                      <div className="flex items-start gap-3">
+                        <div className="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center flex-shrink-0">
+                          <Shield className="w-5 h-5 text-blue-950" />
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-blue-950">
+                            Safe & Reliable
+                          </h4>
+                          <p className="text-sm text-gray-600">
+                            Professional drivers with verified credentials
+                          </p>
+                        </div>
                       </div>
-                      <p className="text-gray-700 text-sm mb-6">
-                        {courses[currentCourse].duration}
-                      </p>
-                      <p className="text-blue-950 font-semibold italic">
-                        Unlock a skill that will last a lifetime.
-                      </p>
+                      <div className="flex items-start gap-3">
+                        <div className="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center flex-shrink-0">
+                          <Clock className="w-5 h-5 text-blue-950" />
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-blue-950">
+                            Punctual Service
+                          </h4>
+                          <p className="text-sm text-gray-600">
+                            We value your time and always arrive on schedule
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <div className="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center flex-shrink-0">
+                          <Zap className="w-5 h-5 text-blue-950" />
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-blue-950">
+                            Modern Vehicles
+                          </h4>
+                          <p className="text-sm text-gray-600">
+                            Well-maintained, comfortable cars for your journey
+                          </p>
+                        </div>
+                      </div>
                     </div>
 
                     <Button
-                      onClick={() => {
-                        setFormData({
-                          ...formData,
-                          course: courses[currentCourse].name,
-                        });
-                        setShowForm(true);
-                      }}
-                      className="w-full bg-blue-950 hover:bg-blue-900 text-white font-bold text-lg py-6 "
+                      onClick={() => setShowRideForm(true)}
+                      className="w-full bg-blue-950 hover:bg-blue-900 text-white font-bold text-lg py-6"
                     >
-                      Get Started
+                      Request a Ride Now
                     </Button>
 
                     <div className="mt-6 pt-6 border-t border-gray-200">
                       <p className="text-xs text-gray-600 text-center">
-                        Campus-based for your convenience • Flexible scheduling
-                        available
+                        Available 24/7 • Campus-wide service • Competitive rates
                       </p>
                     </div>
-                  </motion.div>
-                </AnimatePresence>
-
-                {/* Carousel Indicators */}
-                <div className="absolute bottom-1 right-0 right-0 flex justify-left gap-2">
-                  {courses.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentCourse(index)}
-                      className={`w-3 h-3 rounded-full transition-all ${
-                        currentCourse === index
-                          ? "bg-yellow-700 w-2"
-                          : "bg-white/50 hover:bg-white/80"
-                      }`}
-                      aria-label={`View course ${index + 1}`}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="relative w-full h-96 mb-6">
+                    <Image
+                      src="/car.png"
+                      alt="Majay Driving School Car"
+                      fill
+                      className="object-contain"
+                      priority
                     />
-                  ))}
-                </div>
-              </div>
+                  </div>
+
+                  {/* Course Carousel */}
+                  <div className="relative h-80 overflow-hidden">
+                    <AnimatePresence mode="wait">
+                      <motion.div
+                        key={`course-${currentCourse}`}
+                        initial={{ opacity: 0, x: 50 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -50 }}
+                        transition={{ duration: 0.5 }}
+                        className="bg-white/95 backdrop-blur rounded-2xl p-8 shadow-2xl absolute inset-0"
+                        whileHover={{
+                          y: -10,
+                          boxShadow: "0 30px 60px rgba(0, 0, 0, 0.3)",
+                        }}
+                      >
+                        <h3 className="text-2xl font-bold text-blue-950 mb-6">
+                          Special Offer
+                        </h3>
+                        <div className="mb-8">
+                          <p className="text-sm text-gray-600 mb-2">
+                            {courses[currentCourse].name}
+                          </p>
+                          <div className="text-5xl font-bold text-yellow-500 mb-2">
+                            {courses[currentCourse].price}
+                          </div>
+                          <p className="text-gray-700 text-sm mb-6">
+                            {courses[currentCourse].duration}
+                          </p>
+                          <p className="text-blue-950 font-semibold italic">
+                            Unlock a skill that will last a lifetime.
+                          </p>
+                        </div>
+
+                        <Button
+                          onClick={() => {
+                            setFormData({
+                              ...formData,
+                              course: courses[currentCourse].name,
+                            });
+                            setShowForm(true);
+                          }}
+                          className="w-full bg-blue-950 hover:bg-blue-900 text-white font-bold text-lg py-6 "
+                        >
+                          Get Started
+                        </Button>
+
+                        <div className="mt-6 pt-6 border-t border-gray-200">
+                          <p className="text-xs text-gray-600 text-center">
+                            Campus-based for your convenience • Flexible
+                            scheduling available
+                          </p>
+                        </div>
+                      </motion.div>
+                    </AnimatePresence>
+
+                    {/* Carousel Indicators */}
+                    <div className="absolute bottom-1 right-0 right-0 flex justify-left gap-2">
+                      {courses.map((_, index) => (
+                        <button
+                          key={`course-indicator-${index}`}
+                          onClick={() => setCurrentCourse(index)}
+                          className={`w-3 h-3 rounded-full transition-all ${
+                            currentCourse === index
+                              ? "bg-yellow-700 w-2"
+                              : "bg-white/50 hover:bg-white/80"
+                          }`}
+                          aria-label={`View course ${index + 1}`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
             </motion.div>
           </div>
         </div>
@@ -364,6 +581,12 @@ export default function Home() {
                     <span className="text-yellow-400 font-bold mt-1">•</span>
                     <span>DVLA Assistance</span>
                   </li>
+                  <Button
+                    onClick={() => setShowForm(true)}
+                    className="bg-yellow-400 hover:bg-yellow-500 text-blue-950 font-bold text-lg px-10 py-6"
+                  >
+                    Enroll Today
+                  </Button>
                 </ul>
               </motion.div>
             </StaggerItem>
@@ -398,6 +621,12 @@ export default function Home() {
                     <span className="text-yellow-400 font-bold mt-1">•</span>
                     <span>Priority scheduling</span>
                   </li>
+                  <Button
+                    onClick={() => setShowForm(true)}
+                    className="bg-yellow-400 hover:bg-yellow-500 text-blue-950 font-bold text-lg px-10 py-6"
+                  >
+                    Enroll Today
+                  </Button>
                 </ul>
               </motion.div>
             </StaggerItem>
@@ -432,6 +661,12 @@ export default function Home() {
                     <span className="text-yellow-400 font-bold mt-1">•</span>
                     <span>Confidence building</span>
                   </li>
+                  <Button
+                    onClick={() => setShowForm(true)}
+                    className="bg-yellow-400 hover:bg-yellow-500 text-blue-950 font-bold text-lg px-10 py-6"
+                  >
+                    Enroll Today
+                  </Button>
                 </ul>
               </motion.div>
             </StaggerItem>
@@ -651,6 +886,17 @@ export default function Home() {
         handleSubmit={handleSubmit}
         isSubmitting={isSubmitting}
         submitMessage={submitMessage}
+      />
+
+      {/* Ride Request Modal Component */}
+      <RideRequestModal
+        showForm={showRideForm}
+        setShowForm={setShowRideForm}
+        formData={rideFormData}
+        handleInputChange={handleRideInputChange}
+        handleSubmit={handleRideSubmit}
+        isSubmitting={isRideSubmitting}
+        submitMessage={rideSubmitMessage}
       />
     </div>
   );
