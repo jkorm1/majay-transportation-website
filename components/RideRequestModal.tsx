@@ -102,7 +102,6 @@ export const RideRequestModal = ({
                   placeholder="Your full name"
                 />
               </div>
-
               <div>
                 <label
                   htmlFor="phone"
@@ -121,7 +120,6 @@ export const RideRequestModal = ({
                   placeholder="0599493721"
                 />
               </div>
-
               <div>
                 <label
                   htmlFor="location"
@@ -140,7 +138,6 @@ export const RideRequestModal = ({
                   placeholder="Your pickup location"
                 />
               </div>
-
               {/* 添加取货时间选择字段 */}
               <div>
                 <label
@@ -162,7 +159,6 @@ export const RideRequestModal = ({
                   <option value="Custom">Set Custom Time</option>
                 </select>
               </div>
-
               {/* 自定义时间输入，仅在选择"Set Custom Time"时显示 */}
               {formData.pickupTime === "Custom" && (
                 <div>
@@ -184,31 +180,31 @@ export const RideRequestModal = ({
                 </div>
               )}
 
-              {/* 添加价格选择字段 */}
-              <div>
+              <div className="relative">
                 <label
                   htmlFor="price"
                   className="block text-sm font-semibold text-blue-950 mb-2"
                 >
                   Willing to Pay
                 </label>
-                <select
-                  id="price"
-                  name="price"
-                  value={formData.price}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-4 py-2 border-2 border-blue-200 rounded-lg focus:outline-none focus:border-blue-950 focus:ring-2 focus:ring-blue-200"
-                >
-                  <option value="">Select a price</option>
-                  <option value="GH₵ 20">GH₵ 20</option>
-                  <option value="GH₵ 25">GH₵ 25</option>
-                  <option value="GH₵ 30">GH₵ 30</option>
-                  <option value="GH₵ 40">GH₵ 40</option>
-                  <option value="GH₵ 50">GH₵ 50</option>
-                </select>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 font-semibold">
+                    GH₵
+                  </span>
+                  <input
+                    type="number"
+                    id="price"
+                    name="price"
+                    value={formData.price.replace("GH₵ ", "")}
+                    onChange={handleInputChange}
+                    required
+                    min="0"
+                    step="0.01"
+                    className="w-full pl-12 pr-4 py-2 border-2 border-blue-200 rounded-lg focus:outline-none focus:border-blue-950 focus:ring-2 focus:ring-blue-200"
+                    placeholder="0.00"
+                  />
+                </div>
               </div>
-
               {/* 添加备注字段 */}
               <div>
                 <label
@@ -227,13 +223,11 @@ export const RideRequestModal = ({
                   placeholder="Any additional information... (e.g., I have luggage, I'm in a hurry, etc.)"
                 />
               </div>
-
               {submitMessage && !isSuccess && (
                 <div className="p-3 rounded-lg text-center text-sm font-semibold bg-red-100 text-red-700">
                   {submitMessage}
                 </div>
               )}
-
               <Button
                 type="submit"
                 disabled={isSubmitting}
@@ -248,7 +242,6 @@ export const RideRequestModal = ({
                   "Request Ride"
                 )}
               </Button>
-
               <p className="text-xs text-gray-500 text-center">
                 We'll contact you shortly to confirm your ride.
               </p>
