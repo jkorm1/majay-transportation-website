@@ -180,31 +180,42 @@ export const RideRequestModal = ({
                 </div>
               )}
 
-              <div className="relative">
+              <div>
                 <label
                   htmlFor="price"
                   className="block text-sm font-semibold text-blue-950 mb-2"
                 >
                   Willing to Pay
                 </label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 font-semibold">
-                    GH₵
-                  </span>
-                  <input
-                    type="number"
-                    id="price"
-                    name="price"
-                    value={formData.price.replace("GH₵ ", "")}
-                    onChange={handleInputChange}
-                    required
-                    min="0"
-                    step="0.01"
-                    className="w-full pl-12 pr-4 py-2 border-2 border-blue-200 rounded-lg focus:outline-none focus:border-blue-950 focus:ring-2 focus:ring-blue-200"
-                    placeholder="0.00"
-                  />
-                </div>
+                <select
+                  id="price"
+                  name="price"
+                  value={formData.price.replace("GH₵ ", "")}
+                  onChange={(e) => {
+                    const syntheticEvent = {
+                      ...e,
+                      target: {
+                        ...e.target,
+                        name: e.target.name,
+                        value: `GH₵ ${e.target.value}`,
+                      },
+                    };
+                    handleInputChange(
+                      syntheticEvent as React.ChangeEvent<HTMLSelectElement>,
+                    );
+                  }}
+                  required
+                  className="w-full px-4 py-2 border-2 border-blue-200 rounded-lg focus:outline-none focus:border-blue-950 focus:ring-2 focus:ring-blue-200"
+                >
+                  <option value="">Select amount</option>
+                  <option value="20">GH₵ 20</option>
+                  <option value="25">GH₵ 25</option>
+                  <option value="30">GH₵ 30</option>
+                  <option value="40">GH₵ 40</option>
+                  <option value="50">GH₵ 50</option>
+                </select>
               </div>
+
               {/* 添加备注字段 */}
               <div>
                 <label
@@ -220,7 +231,7 @@ export const RideRequestModal = ({
                   onChange={handleInputChange}
                   rows={3}
                   className="w-full px-4 py-2 border-2 border-blue-200 rounded-lg focus:outline-none focus:border-blue-950 focus:ring-2 focus:ring-blue-200"
-                  placeholder="Any additional information... (e.g., I have luggage, I'm in a hurry, etc.)"
+                  placeholder="Any additional information... (e.g., I'm going to Queens Hall, I have luggage, I'm in a hurry, etc.)"
                 />
               </div>
               {submitMessage && !isSuccess && (
