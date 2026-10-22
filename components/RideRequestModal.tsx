@@ -190,20 +190,8 @@ export const RideRequestModal = ({
                 <select
                   id="price"
                   name="price"
-                  value={formData.price.replace("GH₵ ", "")}
-                  onChange={(e) => {
-                    const syntheticEvent = {
-                      ...e,
-                      target: {
-                        ...e.target,
-                        name: e.target.name,
-                        value: `GH₵ ${e.target.value}`,
-                      },
-                    };
-                    handleInputChange(
-                      syntheticEvent as React.ChangeEvent<HTMLSelectElement>,
-                    );
-                  }}
+                  value={formData.price}
+                  onChange={handleInputChange}
                   required
                   className="w-full px-4 py-2 border-2 border-blue-200 rounded-lg focus:outline-none focus:border-blue-950 focus:ring-2 focus:ring-blue-200"
                 >

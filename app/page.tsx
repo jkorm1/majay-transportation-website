@@ -38,8 +38,12 @@ export default function Home() {
     name: "",
     phone: "",
     location: "",
+    pickupTime: "",
+    customTime: "",
     price: "",
+    notes: "",
   });
+
   const [isRideSubmitting, setIsRideSubmitting] = useState(false);
   const [rideSubmitMessage, setRideSubmitMessage] = useState("");
 
@@ -136,21 +140,8 @@ export default function Home() {
     >,
   ) => {
     const { name, value } = e.target;
-
-    // If it's the price field, add the GH₵ prefix
-    if (name === "price") {
-      setRideFormData((prev) => ({
-        ...prev,
-        [name]: `GH₵ ${value}`,
-      }));
-    } else {
-      setRideFormData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    }
+    setRideFormData((prev) => ({ ...prev, [name]: value }));
   };
-
   const handleRideSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsRideSubmitting(true);
