@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Phone, MapPin, Clock, Shield, Zap, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
@@ -47,6 +47,29 @@ export default function Home() {
   const [isRideSubmitting, setIsRideSubmitting] = useState(false);
   const [rideSubmitMessage, setRideSubmitMessage] = useState("");
 
+  const [showUnavailable, setShowUnavailable] = useState(false);
+  const [checkingAvailability, setCheckingAvailability] = useState(false);
+
+  const handleRideClick = async () => {
+    setCheckingAvailability(true);
+    try {
+      const res = await fetch("/api/availability", { cache: "no-store" });
+      const data = await res.json();
+      if (data.available === false) {
+        setShowUnavailable(true);
+      } else {
+        // Reset any old message so the form opens fresh
+        setRideSubmitMessage("");
+        setShowRideForm(true);
+      }
+    } catch {
+      // If the check fails, let the customer continue
+      setShowRideForm(true);
+    } finally {
+      setCheckingAvailability(false);
+    }
+  };
+
   const courses = [
     {
       name: "Beginner Course (Regular)",
@@ -72,12 +95,12 @@ export default function Home() {
   ];
 
   // Auto-rotate courses every 5 seconds
-  useState(() => {
+  useEffect(() => {
     const interval = setInterval(() => {
       setCurrentCourse((prev) => (prev + 1) % courses.length);
     }, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [courses.length]);
 
   const handleInputChange = (
     e: React.ChangeEvent<
@@ -269,7 +292,8 @@ export default function Home() {
                   </p>
                   <div className="flex flex-col sm:flex-row gap-4 mb-10">
                     <Button
-                      onClick={() => setShowRideForm(true)}
+                      onClick={handleRideClick}
+                      disabled={checkingAvailability}
                       className="bg-yellow-400 hover:bg-yellow-500 text-blue-950 font-bold text-lg px-8 py-6"
                     >
                       Request a Ride
@@ -385,7 +409,8 @@ export default function Home() {
                     </div>
 
                     <Button
-                      onClick={() => setShowRideForm(true)}
+                      onClick={handleRideClick}
+                      disabled={checkingAvailability}
                       className="w-full bg-blue-950 hover:bg-blue-900 text-white font-bold text-lg py-6"
                     >
                       Request a Ride Now
@@ -879,6 +904,29 @@ export default function Home() {
           </p>
         </div>
       </footer>
+
+      {showUnavailable && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center">
+            <div className="w-14 h-14 bg-yellow-400 rounded-full flex items-center justify-center mx-auto mb-4">
+              <MapPin className="w-7 h-7 text-blue-950" />
+            </div>
+            <h3 className="text-xl font-bold text-blue-950 mb-2">
+              Driver Currently Far Away
+            </h3>
+            <p className="text-gray-600 mb-6">
+              Our driver is currently far from your location. Please try again
+              in a few minutes.
+            </p>
+            <Button
+              onClick={() => setShowUnavailable(false)}
+              className="w-full bg-blue-950 hover:bg-blue-900 text-white font-bold py-3"
+            >
+              OK
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Enrollment Modal Component */}
       <EnrollmentModal

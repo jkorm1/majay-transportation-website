@@ -1,10 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { google } from 'googleapis';
 import { sendRideRequestNotification } from '@/lib/telegram';
+import { getAvailability, UNAVAILABLE_MESSAGE } from '@/lib/availability';
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
+
+        const available = await getAvailability();
+    if (!available) {
+      return NextResponse.json(
+        { error: UNAVAILABLE_MESSAGE, unavailable: true },
+        { status: 403 }
+      );
+    }
 
     // Validate required fields
     if (!body.name || !body.phone || !body.location) {
