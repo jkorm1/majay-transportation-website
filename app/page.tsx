@@ -915,7 +915,7 @@ export default function Home() {
               Driver Currently Far Away
             </h3>
             <p className="text-gray-600 mb-6">
-              Our driver is currently far from your location. Please try again
+              Your driver is currently far from your location. Please try again
               in a few minutes.
             </p>
             <Button
