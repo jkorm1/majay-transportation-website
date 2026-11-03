@@ -7,8 +7,8 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Stardrive - Feel the drive",
-  description: "Stardrive Transport",
+  title: "Stardrive Transport",
+  description: "Stardrive - Feel the drive",
   generator: "v0.app",
   icons: {
     icon: [
