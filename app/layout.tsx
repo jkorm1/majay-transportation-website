@@ -7,8 +7,8 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Majay Transportation - Leading Ghana Forward",
-  description: "Created with v0",
+  title: "Stardrive - Feel the drive",
+  description: "Stardrive Transport",
   generator: "v0.app",
   icons: {
     icon: [
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
         type: "image/png",
       },
     ],
-    apple: "/apple-icon.png",
+    apple: "/apple-touch-icon.png",
   },
 };
 

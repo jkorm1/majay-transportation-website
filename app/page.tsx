@@ -244,7 +244,7 @@ export default function Home() {
                 />
               </div>
               <span className="text-white font-bold text-lg">
-                Majay Transportation
+                Stardrive Transportation
               </span>
             </div>
             <div className="flex bg-black/20 rounded-lg p-1">
@@ -284,7 +284,7 @@ export default function Home() {
               {currentMode === "ride" ? (
                 <>
                   <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight text-balance">
-                    Request a Ride with Majay
+                    Request a Ride with Stardrive
                   </h1>
                   <p className="text-xl md:text-2xl text-blue-100 mb-8 text-balance">
                     Safe, reliable, and comfortable transportation services.
@@ -364,7 +364,7 @@ export default function Home() {
                   {/* Ride Request Info */}
                   <div className="bg-white/95 backdrop-blur rounded-2xl p-8 shadow-2xl">
                     <h3 className="text-2xl font-bold text-blue-950 mb-6">
-                      Why Choose Majay for Your Rides?
+                      Why Choose Stardrive for Your Rides?
                     </h3>
                     <div className="space-y-4 mb-8">
                       <div className="flex items-start gap-3">
@@ -730,7 +730,7 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-32 relative z-10">
           <AnimatedSection>
             <h2 className="text-4xl font-bold text-center text-white mb-4">
-              Why Choose Majay?
+              Why Choose Stardrive?
             </h2>
             <p className="text-center text-blue-100 mb-16 text-lg">
               Leading Ghana Forward with Excellence
@@ -828,7 +828,7 @@ export default function Home() {
             </h2>
             <p className="text-xl text-gray-700 mb-8">
               Join hundreds of students who have successfully learned to drive
-              with Majay Transportation.
+              with Stardrive Transportation.
             </p>
           </AnimatedSection>
           <AnimatedSection>
@@ -893,14 +893,16 @@ export default function Home() {
       <footer className="bg-blue-950 text-blue-100 py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto text-center">
           <p className="mb-2">
-            <span className="font-bold text-white">Majay Transportation</span> -
-            Leading Ghana Forward
+            <span className="font-bold text-white">
+              Stardrive Transportation
+            </span>{" "}
+            - Leading Ghana Forward
           </p>
           <p className="text-sm">
             Ghana&apos;s Premier Transport & Driving School System
           </p>
           <p className="text-xs mt-4 text-blue-200">
-            © 2026 Majay Transportation. All rights reserved.
+            © 2026 Stardrive Transportation. All rights reserved.
           </p>
         </div>
       </footer>
