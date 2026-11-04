@@ -11,7 +11,8 @@ interface RideRequestModalProps {
   formData: {
     name: string;
     phone: string;
-    location: string;
+    pickupPoint: string;
+    destination: string;
     pickupTime: string;
     customTime: string;
     price: string;
@@ -122,20 +123,38 @@ export const RideRequestModal = ({
               </div>
               <div>
                 <label
-                  htmlFor="location"
+                  htmlFor="pickupPoint"
                   className="block text-sm font-semibold text-blue-950 mb-2"
                 >
-                  Pickup Location
+                  Pickup Point
                 </label>
                 <input
                   type="text"
-                  id="location"
-                  name="location"
-                  value={formData.location}
+                  id="pickupPoint"
+                  name="pickupPoint"
+                  value={formData.pickupPoint}
                   onChange={handleInputChange}
                   required
                   className="w-full px-4 py-2 border-2 border-blue-200 rounded-lg focus:outline-none focus:border-blue-950 focus:ring-2 focus:ring-blue-200"
                   placeholder="Your pickup location"
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="destination"
+                  className="block text-sm font-semibold text-blue-950 mb-2"
+                >
+                  Destination
+                </label>
+                <input
+                  type="text"
+                  id="destination"
+                  name="destination"
+                  value={formData.destination}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full px-4 py-2 border-2 border-blue-200 rounded-lg focus:outline-none focus:border-blue-950 focus:ring-2 focus:ring-blue-200"
+                  placeholder="Where are you going?"
                 />
               </div>
               {/* 添加取货时间选择字段 */}
@@ -219,7 +238,7 @@ export const RideRequestModal = ({
                   onChange={handleInputChange}
                   rows={3}
                   className="w-full px-4 py-2 border-2 border-blue-200 rounded-lg focus:outline-none focus:border-blue-950 focus:ring-2 focus:ring-blue-200"
-                  placeholder="Any additional information... (e.g., I'm going to Queens Hall, I have luggage, I'm in a hurry, etc.)"
+                  placeholder="Any additional information... (e.g: I have luggage)"
                 />
               </div>
               {submitMessage && !isSuccess && (

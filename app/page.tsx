@@ -37,7 +37,8 @@ export default function Home() {
   const [rideFormData, setRideFormData] = useState({
     name: "",
     phone: "",
-    location: "",
+    pickupPoint: "",
+    Destination: "",
     pickupTime: "",
     customTime: "",
     price: "",
@@ -192,7 +193,8 @@ export default function Home() {
           setRideFormData({
             name: "",
             phone: "",
-            location: "",
+            pickupPoint: "",
+            destination: "",
             pickupTime: "",
             customTime: "",
             price: "",

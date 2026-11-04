@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate required fields
-    if (!body.name || !body.phone || !body.location) {
+    if (!body.name || !body.phone || !body.pickupPoint || !body.destination || !body.pickupTime || !body.price) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
     // Append the data to the Google Sheet
     await sheets.spreadsheets.values.append({
       spreadsheetId: sheetId,
-      range: 'Ride Requests!A:G',
+      range: 'Ride Requests!A:H',
       valueInputOption: 'USER_ENTERED',
       insertDataOption: 'INSERT_ROWS',
       requestBody: {
@@ -61,7 +61,8 @@ export async function POST(request: NextRequest) {
             new Date().toISOString(),
             body.name,
             body.phone,
-            body.location,
+            body.pickupPoint || '',
+            body.destination || '',
             body.pickupTime === 'Right Now' ? 'Right Now' : `Custom: ${body.customTime || 'Not specified'}`,
             body.price,
             body.notes || '',
@@ -75,7 +76,8 @@ export async function POST(request: NextRequest) {
       await sendRideRequestNotification({
         name: body.name,
         phone: body.phone,
-        location: body.location,
+        pickupPoint: body.pickupPoint || '',
+        destination: body.destination || '',
         pickupTime: body.pickupTime || '',
         customTime: body.customTime || '',
         price: body.price,
@@ -93,7 +95,8 @@ export async function POST(request: NextRequest) {
         formData: {
           name: body.name,
           phone: body.phone,
-          location: body.location,
+          pickupPoint: body.pickupPoint || '',
+          destination: body.destination || '',
           pickupTime: body.pickupTime || '',
           customTime: body.customTime || '',
           price: body.price,

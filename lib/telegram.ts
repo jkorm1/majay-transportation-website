@@ -11,11 +11,14 @@ interface EnrollmentData {
 interface RideRequestData {
   name: string;
   phone: string;
-  location: string;
+  pickupPoint: string;
+  destination: string;
   pickupTime: string;
+  customTime: string;
   price: string;
   notes: string;
 }
+
 
 interface TelegramMessage {
   chat_id: string;
@@ -37,18 +40,18 @@ export async function sendEnrollmentNotification(data: EnrollmentData) {
       return { success: false, message: "Telegram credentials not configured" };
     }
     
-    // Format the message for Telegram
-    const message = `
+   const message = `
 🆕 *New Driving School Enrollment*
 
 📋 *Timestamp:* ${new Date().toLocaleString()}
-👤 *Full Name:* ${data.fullName}
+👤 *Full Name:* ${data.name}
 📞 *Phone:* ${data.phone}
 📧 *Email:* ${data.email}
 🚗 *Course:* ${data.course}
 📅 *Start Date:* ${data.startDate}
 ${data.note ? `📝 *Note:* ${data.note}` : ''}
     `.trim();
+
     
     // Send the message to Telegram
     const telegramResponse = await fetch(
@@ -99,17 +102,19 @@ export async function sendRideRequestNotification(data: RideRequestData) {
     }
     
     // Format the message for Telegram
-    const message = `
+   const message = `
 🆕 *New Ride Request*
 
 📋 *Timestamp:* ${new Date().toLocaleString()}
 👤 *Name:* ${data.name}
 📞 *Phone:* ${data.phone}
-📍 *Pickup Location:* ${data.location}
+📍 *Pickup Point:* ${data.pickupPoint}
+🏁 *Destination:* ${data.destination}
 🕐 *Pickup Time:* ${data.pickupTime === 'Right Now' ? 'Right Now' : `Custom: ${data.customTime || 'Not specified'}`}
 💰 *Price:* ${data.price}
 ${data.notes ? `📝 *Notes:* ${data.notes}` : ''}
     `.trim();
+
     
     // Send the message to Telegram
     const telegramResponse = await fetch(
