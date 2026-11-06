@@ -336,7 +336,7 @@ export default function Home() {
               <div className="space-y-3 text-blue-100">
                 <div className="flex items-center gap-3">
                   <Phone className="w-5 h-5 text-yellow-400 flex-shrink-0" />
-                  <span className="font-semibold">0599493721 / 0507971597</span>
+                  <span className="font-semibold">0533652730 / 0507971597</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <MapPin className="w-5 h-5 text-yellow-400 flex-shrink-0" />
@@ -862,7 +862,7 @@ export default function Home() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <motion.a
-                  href="tel:0599493721"
+                  href="tel:0533652730"
                   className="inline-flex items-center gap-2 bg-blue-950 text-white px-8 py-3 rounded-lg hover:bg-blue-900 font-semibold"
                   whileHover={{
                     scale: 1.05,
@@ -871,7 +871,7 @@ export default function Home() {
                   whileTap={{ scale: 0.98 }}
                 >
                   <Phone className="w-5 h-5" />
-                  0599493721
+                  0533652730
                 </motion.a>
                 <motion.a
                   href="tel:0507971597"
